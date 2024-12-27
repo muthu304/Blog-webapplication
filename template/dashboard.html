@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container-fluid ">
+        <div class="row">
+          <div class="col-6">
+              <h3> Hi, {{user.username}}.</h3>
+          </div>
+          <div class="col d-flex justify-content-end">
+              <div>
+                  <h2>Your Groups:</h2>
+                  <ul>
+                      <li>You are not a member of any groups.</li>
+                  </ul>
+              </div>
+          </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+          <div class="col-6">
+               <!-- Error messages -->
+                    {% for field in form %}
+                         {% if field.errors %}
+                               <div class="col-12">
+                                   <span class="fw-bold"> {{field.label_tag}} </span>
+                                   {% for errors in field.errors%}
+                                   <span class="text-danger"> {{errors}} </span>
+                                   {% endfor %}
+                               </div>
+                         {% endif %}
+                    {% endfor %}
+
+                     <!-- Non field errors -->
+                    {% for error in form.non_field_errors %}
+                           <div class="alert alert-danger">
+                               {{ error }}
+                           </div>
+                    {% endfor %}
+
+                    <!-- Success messages -->
+                    {% if messages %}
+                         {% for message in messages %}
+                               <div class="alert alert-success">
+                                   {{message}}
+                               </div>
+                         {% endfor %}
+                    {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <h2 class="mt-3">{{blog_title}}</h2>
+          <div class="d-flex justify-content-center">
+              <a href="{% url 'newpost' %}" class="btn btn-success">New Post</a>
+          </div>
+        </div>
+        <div class="row m-3">
+             {% for post in page_obj %}
+            <div class="col-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="{{post.formatted_img_url}}" class="img-fluid" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="card-title">{{post.title}}</h5>
+                                <h6 class="card-text">{{post.rating}}</h6>
+                                <p class="card-text">{{post.content|truncatechars:50}}</p>
+                                <div class="d-flex justify-content-between">
+                                     <a href="{% url 'detail' slug=post.slug %}">Read More</a>
+                                    <a class="text-decoration-none text-dark fw-bold" href="">{{post.category.name}}</a>
+                                </div>
+
+                                <div class="d-flex justify-content-between mt-3">
+                                     <a class="btn btn-outline-warning" href="{% url 'edit_post' post_id=post.id %}">Edit</a>
+                                     <button class="btn btn-outline-danger" onclick= "confirmBeforeDelete('{% url 'delete_post' post_id=post.id %}')">Delete</button>
+                                     <a class="btn btn-outline-success" href="{% url 'publish_post' post_id=post.id %}">Publish</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+           {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+
+                    <!-- Previous Page Link -->
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Previous</span>
+                    </li>
+                    {% endif %}
+
+                    <!-- Numbered Page Links -->
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    <!-- Next Page Link -->
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                    </li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+            {% endif %}
+
+            </div>
+
+        </div>
+      </div>
+      <script>
+          function confirmBeforeDelete(url) {
+              var userConfirmed = confirm("Are you sure want to delete")
+
+              if (userConfirmed) {
+                  window.location.href = url
+              }
+          }
+      </script>
+
+{% endblock %}

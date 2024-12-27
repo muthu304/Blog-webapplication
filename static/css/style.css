@@ -1,0 +1,22 @@
+/* style.css */
+
+body {
+    background-color: rgba(0, 0, 0, 0.5); /* Add a slight overlay for better readability */
+}
+
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Keep the video behind other content */
+}
+
+.content-wrapper {
+    padding: 20px; /* Add some padding for better content spacing */
+}
+.p-3.bg-dark.text-white a:hover {
+    color: #0dcaf0; /* Example hover color */
+    text-decoration: underline;
+}
